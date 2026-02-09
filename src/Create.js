@@ -2,8 +2,7 @@ export function hacerAlgo() {
 
 
   let code = generateCode()
-
-    console.log(code)
+  return code;
 
 }
 
