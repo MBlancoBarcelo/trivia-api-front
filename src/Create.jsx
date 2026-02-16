@@ -1,16 +1,18 @@
 import "./MainMenu.css";
+import { useEffect } from "react";
 import { Link } from "react-router";
 import { hacerAlgo } from "./Create.js"
 
 function Create() {
+  useEffect(() => {
+    hacerAlgo()
+  })
+
   return (
     <>
       <div id="titulo">
         <h1>TRIVIA</h1>
-      </div>
-              <h2>{hacerAlgo()}</h2>
 
-      <div>
         <Link to="/">PULSAME ESTAAAAAQQ</Link>
       </div>
     </>

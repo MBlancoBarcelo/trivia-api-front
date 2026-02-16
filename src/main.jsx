@@ -11,7 +11,7 @@ const router = createBrowserRouter([
     path: "/",
     Component: MainMenu,
   },{
-    path:"/skibidi",
+    path:"/rooms",
     Component: Create,
   },{
     path:"/oscarstream",

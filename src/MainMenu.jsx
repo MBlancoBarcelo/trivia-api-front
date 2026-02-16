@@ -8,7 +8,7 @@ function MainMenu() {
       <h1>TRIVIA</h1>
     </div>
     <div id="botones">
-      <Link to="/skibidi"> CREAR SALA </Link>
+      <Link to="/rooms"> CREAR SALA </Link>
       <Link to="/oscarstream"> Unirse SALA </Link>
       </div>
     </>
