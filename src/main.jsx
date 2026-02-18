@@ -14,7 +14,7 @@ const router = createBrowserRouter([
     path:"/rooms",
     Component: Create,
   },{
-    path:"/oscarstream",
+    path:"/join",
     Component: Join
   }
 ])

@@ -1,17 +1,37 @@
 export async function hacerAlgo() {
-  let codigo = generateCode()
-  let prueba = codigo+"";
-  let objeto = {
-    "code":prueba
+  try {
+    let codigo = generateCode();
+    let objeto = {
+      code: codigo + ""
+    };
+
+    const response = await fetch("http://localhost:8083/rooms", {
+      method: "POST",
+      body: JSON.stringify(objeto),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await response.json();
+
+    const roomId = data.code;
+    const id = data.id;
+
+    const link = `${window.location.origin}/join?code=${roomId}&id=${id}`;
+
+    await navigator.clipboard.writeText(link);
+
+    console.log("Sala creada:", roomId);
+    console.log("Link copiado:", link);
+
+    return link;
+
+  } catch (error) {
+    console.error("Error creando la sala:", error);
   }
-  fetch("http://localhost:8083/rooms",{
-    method:"post",
-    body: JSON.stringify(objeto),
-    headers:{
-      "Content-Type": "application/json"
-    }
-  })
 }
+
 
 
 
