@@ -8,8 +8,10 @@ function Join() {
   const [username, setUsername] = useState("");
   const [searchParams, setSearchParams] = useSearchParams({
     code: "",
-    id: ""
+    id: "",
+    playerId: ""
   });
+  
 
 
   return (

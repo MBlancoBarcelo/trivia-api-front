@@ -8,8 +8,8 @@ function MainMenu() {
       <h1>TRIVIA</h1>
     </div>
     <div id="botones">
-      <Link to="/rooms"> CREAR SALA </Link>
-      <Link to="/oscarstream"> Unirse SALA </Link>
+      <Link to="/create"> CREAR SALA </Link>
+      <Link to="/join"> Unirse SALA </Link>
       </div>
     </>
   )
