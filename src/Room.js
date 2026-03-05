@@ -1,26 +1,9 @@
-
-export function subscribeToRoomEvents(id, onMessage) {
-    const token = localStorage.getItem("token");
-    const eventSource = new EventSource(``);
-    
-    eventSource.addEventListener("player-joined", (event) => {
-        const data = event.data;
-        console.log("Evento recibido:", data);
-        onMessage({ type: "player-joined", data: data });
-    });
-    
-    eventSource.addEventListener("player-left", (event) => {
-        const data = event.data;
-        console.log("Jugador salió:", data);
-        onMessage({ type: "player-left", data: data });
-    });
-
-    eventSource.onerror = () => {
-        console.error("Error en SSE");
-        eventSource.close();
-    };
-    
-    return eventSource;
+export function eliminateRoom(idRoom){
+    fetch (`http://localhost:8083/rooms/${idRoom}`,{
+        headers:{
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+    })
 }
 
 export async function getPlayers(id) {
@@ -125,7 +108,7 @@ export async function createTeam(roomId) {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
             }
         });
-        if (!response.ok) throw new Error("failed to create team");
+
         return await response.json();
     } catch (err) {
         console.error("Error creating team:", err);

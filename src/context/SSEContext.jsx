@@ -34,7 +34,19 @@ export const SSEProvider = ({ id, token, children }) => {
     },[id, token]);
 
     return (
-        <SSEContext.Provider value={{ connected }}>
+        <SSEContext.Provider value={{ 
+            connected,
+            addEventListener: (eventType, callback) => {
+                if (eventSourceRef.current) {
+                    eventSourceRef.current.addEventListener(eventType, callback);
+                }
+            },
+            removeEventListener: (eventType, callback) => {
+                if (eventSourceRef.current) {
+                    eventSourceRef.current.removeEventListener(eventType, callback);
+                }
+            }
+         }}>
             {children}
         </SSEContext.Provider>
     );
