@@ -1,29 +1,7 @@
-export async function getRoomLog(id) {
-    
-
-    console.log(localStorage.getItem("token"))
-    fetch(`http://localhost:8083/rooms/${id}`,{
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
-        }
-    }).then(response => response.json())
-    .then(data => {{}
-        console.log("Datos de la sala:", data);
-    })
-
-    fetch(`http://localhost:8083/rooms/${id}/players`,{
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
-        }
-    }).then(response => response.json())
-    .then(data => {
-        console.log("Jugadores en la sala:", data);
-    })
-}
 
 export function subscribeToRoomEvents(id, onMessage) {
     const token = localStorage.getItem("token");
-    const eventSource = new EventSource(`http://localhost:8083/rooms/${id}/events?token=${token}`);
+    const eventSource = new EventSource(``);
     
     eventSource.addEventListener("player-joined", (event) => {
         const data = event.data;
@@ -74,6 +52,38 @@ export async function leaveRoom(roomId, playerId) {
     } catch (err) {
         console.error("Error leaving room:", err);
         return false;
+    }
+}
+
+export async function getHostId(roomId) {
+    try {
+        const response = await fetch(`http://localhost:8083/rooms/${roomId}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        });
+        if (!response.ok) throw new Error("failed to fetch room");
+        const data = await response.json();
+        return data.hostId;
+    } catch (err) {
+        console.error("Error fetching room:", err);
+        return null;
+    }  
+}
+
+export async function getRoomId(roomId) {
+     try {
+        const response = await fetch(`http://localhost:8083/rooms/${roomId}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        });
+        if (!response.ok) throw new Error("failed to fetch room");
+        const data = await response.json();
+        return data.id;
+    } catch (err) {
+        console.error("Error fetching room:", err);
+        return null;
     }
 }
 
