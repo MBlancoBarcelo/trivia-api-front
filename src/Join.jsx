@@ -12,6 +12,7 @@ function Join() {
     playerId: ""
   });
   
+  localStorage.setItem("id", searchParams.get("id"));
 
 
   return (

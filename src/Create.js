@@ -20,6 +20,8 @@ export async function hacerAlgo() {
 
     const link = `${window.location.origin}/join?code=${roomId}&id=${id}`;
 
+    localStorage.setItem("id", id);
+
     await navigator.clipboard.writeText(link);
 
     console.log("Sala creada:", roomId);
