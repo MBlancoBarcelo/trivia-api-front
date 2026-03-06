@@ -18,6 +18,8 @@ export async function hacerAlgo() {
     const roomId = data.code;
     const id = data.id;
 
+    console.log(data)
+
     const link = `${window.location.origin}/join?code=${roomId}&id=${id}`;
 
     localStorage.setItem("id", id);
