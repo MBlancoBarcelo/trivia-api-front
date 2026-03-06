@@ -24,11 +24,11 @@ export async function removeATeam(idTeam, idRoom) {
       },
     );
 
-     if (!response.ok) throw new Error("no se ha podido eliminar");
-     return true
+    if (!response.ok) throw new Error("no se ha podido eliminar");
+    return true;
   } catch (error) {
     console.log("No se ha podido eliminar el equipo");
-    return false
+    return false;
   }
 }
 
@@ -113,6 +113,55 @@ async function getRoom(roomId) {
     return null;
   }
 }
+
+export async function putMemberInTeam(roomId, teamId, playerId) {
+  try {
+    const response = await fetch(`http://localhost:8083/rooms/${roomId}/teams/${teamId}/players/${playerId}`, {
+      method: "PUT"
+      ,headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    if (!response.ok) throw new Error("no se pudo añadir al equipo");
+  } catch (err) {
+    console.error("Error poniendo a jugador en equipo:", err);
+  }
+}
+
+export async function deletePlayerFromATeam(roomId, teamId, playerId) {
+  try {
+    const response = await fetch(`http://localhost:8083/rooms/${roomId}/teams/${teamId}/players/${playerId}`, {
+      method: "DELETE"
+      ,headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    if (!response.ok) throw new Error("no se pudo añadir al equipo");
+  } catch (err) {
+    console.error("Error poniendo a jugador en equipo:", err);
+  }
+}
+
+export async function getPlayerTeam(idRoom,idPlayer) {
+  try {
+    const response = await fetch(`http://localhost:8083/rooms/${idRoom}/players/${idPlayer}`,{
+      method: "GET"
+      ,headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+    if (!response.ok) throw new Error("no se pudo añadir al equipo");
+    let data = await response.json()
+    console.log(data)
+    return data.teamId
+  } catch (err) {
+    console.error("No se ha podido conseguir informacion del jugador:", err);
+  }
+}
+
+
+
+
 
 export async function getTeams(roomId) {
   try {

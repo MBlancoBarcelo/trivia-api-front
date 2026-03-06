@@ -7,6 +7,9 @@ import {
   getTeams,
   removeATeam,
   getHostId,
+  putMemberInTeam,
+  getPlayerTeam,
+  deletePlayerFromATeam,
 } from "../Room.js";
 import { useState, useEffect } from "react";
 import { useSSE } from "../context/SSEContext.jsx";
@@ -85,29 +88,55 @@ function RoomContent() {
     }
   }
 
+  async function handlePutMemberInTeam(playerId, teamId) {
+    let idRoom = localStorage.getItem("id");
+    if (teamId === "" || teamId === "SinEquipo") {
+      let playerTeamId = await getPlayerTeam(idRoom,playerId)
+      await deletePlayerFromATeam(idRoom, playerTeamId, playerId);
+      return;
+    } else {
+    await putMemberInTeam(idRoom, teamId, playerId);
+    }
+  }
+
   return (
     <div>
       <h1>Room Content</h1>
       <h2>Hola</h2>
 
-      {String( hostId) === playerId && (
+      {String(hostId) === playerId && (
         <button onClick={handleCreateTeam}>Crear Equipo</button>
       )}
       <div>
         Jugadores
         <ul>
           {players.map((player) => (
-            <li key={player.id}> {player.username}</li>
+            <li key={player.id}>
+              {" "}
+              {player.username}
+              <select
+                onChange={(e) =>
+                  handlePutMemberInTeam(player.id, e.target.value)
+                }
+              >
+                <option defaultValue={""}>SinEquipo</option>
+                {teams.map((team) => (
+                  <option key={team.id} value={team.id}>
+                    {team.id}
+                  </option>
+                ))}
+              </select>
+            </li>
           ))}
         </ul>
       </div>
-
 
       <h3>Equipos</h3>
       <ul>
         {teams.map((team) => (
           <li key={team.id}>
             Equipo {team.id}
+
             <button onClick={() => handleEliminateTeam(team.id)}>X</button>
           </li>
         ))}
