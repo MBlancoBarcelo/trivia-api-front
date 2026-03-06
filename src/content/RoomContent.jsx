@@ -91,11 +91,19 @@ function RoomContent() {
   async function handlePutMemberInTeam(playerId, teamId) {
     let idRoom = localStorage.getItem("id");
     if (teamId === "" || teamId === "SinEquipo") {
-      let playerTeamId = await getPlayerTeam(idRoom,playerId)
+      let playerTeamId = await getPlayerTeam(idRoom, playerId);
       await deletePlayerFromATeam(idRoom, playerTeamId, playerId);
+      setPlayers((prev) =>
+        prev.map((p) => (p.id === playerId ? { ...p, teamId: null } : p)),
+      );
       return;
     } else {
-    await putMemberInTeam(idRoom, teamId, playerId);
+      await putMemberInTeam(idRoom, teamId, playerId);
+      setPlayers((prev) =>
+        prev.map((p) =>
+          p.id === playerId ? { ...p, teamId: Number(teamId) } : p,
+        ),
+      );
     }
   }
 
@@ -107,19 +115,47 @@ function RoomContent() {
       {String(hostId) === playerId && (
         <button onClick={handleCreateTeam}>Crear Equipo</button>
       )}
-      <div>
-        Jugadores
-        <ul>
-          {players.map((player) => (
+      <h3>Equipos</h3>
+      <ul>
+        {teams.map((team) => (
+          <li key={team.id}>
+            <strong>Equipo {team.id}</strong>
+
+            <ul>
+              {players
+                .filter((player) => player.teamId === team.id)
+                .map((player) => (
+                  <li key={player.id}>
+                    {player.username}
+                    <button
+                      onClick={() => handlePutMemberInTeam(player.id, "")}
+                    >
+                      Sacar
+                    </button>{" "}
+                  </li>
+                ))}
+            </ul>
+
+            <button onClick={() => handleEliminateTeam(team.id)}>X</button>
+          </li>
+        ))}
+      </ul>
+
+      <h3>Sin equipo</h3>
+      <ul>
+        {players
+          .filter((player) => !player.teamId)
+          .map((player) => (
             <li key={player.id}>
-              {" "}
               {player.username}
               <select
+                value={player.teamId ?? ""}
                 onChange={(e) =>
                   handlePutMemberInTeam(player.id, e.target.value)
                 }
               >
-                <option defaultValue={""}>SinEquipo</option>
+                <option value="">SinEquipo</option>
+
                 {teams.map((team) => (
                   <option key={team.id} value={team.id}>
                     {team.id}
@@ -128,18 +164,6 @@ function RoomContent() {
               </select>
             </li>
           ))}
-        </ul>
-      </div>
-
-      <h3>Equipos</h3>
-      <ul>
-        {teams.map((team) => (
-          <li key={team.id}>
-            Equipo {team.id}
-
-            <button onClick={() => handleEliminateTeam(team.id)}>X</button>
-          </li>
-        ))}
       </ul>
 
       <Link to="/" onClick={handleLeave}>
