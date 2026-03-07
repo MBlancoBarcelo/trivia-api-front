@@ -56,7 +56,7 @@ function RoomContent() {
 
     const onGameCreated = () => {
       console.log("SE DEBERIA INICAR");
-      //navigate("/game")
+      navigate("/");
     };
 
     const onRoomDeleted = () => {
@@ -65,6 +65,11 @@ function RoomContent() {
     };
 
     const onTeamCreated = async () => {
+      const teamData = await getTeams(localStorage.getItem("id"));
+      setTeams(teamData);
+    };
+
+    const onTeamDeleted = async () => {
       const teamData = await getTeams(localStorage.getItem("id"));
       setTeams(teamData);
     };
@@ -84,6 +89,8 @@ function RoomContent() {
     addEventListener("room-deleted", onRoomDeleted);
     addEventListener("game-created", onGameCreated);
     addEventListener("team-created", onTeamCreated);
+    addEventListener("team-deleted", onTeamDeleted);
+
     addEventListener("player-assigned-to-team", onPlayerAssignedToTeam);
     addEventListener("player-removed-from-team", onPlayerRemovedToTeam);
 

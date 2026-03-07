@@ -2,36 +2,29 @@ import { createContext, useEffect, useRef, useContext, useState } from 'react';
 
 const SSEContext = createContext();
 
-export const SSEProvider = ({ id, token, children }) => {
+export const SSEProvider = ({ children }) => {
     const eventSourceRef = useRef(null);
     const [connected, setConnected] = useState(false);
 
     useEffect(() => {
+    const token = localStorage.getItem("token");
+    const roomId = localStorage.getItem("id");
 
+    if (!token || !roomId) return;
         
-        const eventSource = new EventSource(`http://localhost:8083/rooms/${id}/events?token=${token}`);
+        const eventSource = new EventSource(`http://localhost:8083/rooms/${roomId}/events?token=${token}`);
         eventSourceRef.current = eventSource;
 
         eventSource.onopen = () => {
             console.log("SSE connection established");
             setConnected(true);
         };
-
-        eventSource.addEventListener("player-joined", (event) => {
-            const data = event.data;
-            console.log("jugadir unido:", data);
-        });
-
-        eventSource.addEventListener("player-left", (event) => {
-            const data = event.data;
-            console.log("jugador salió:", data);
-        });
-
+        
         return () => {
             eventSource.close();
             setConnected(false);
         };
-    },[id, token]);
+    },[]);
 
     return (
         <SSEContext.Provider value={{ 

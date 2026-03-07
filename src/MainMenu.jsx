@@ -2,6 +2,8 @@ import { Link } from 'react-router'
 import './MainMenu.css'
 
 function MainMenu() {
+  localStorage.removeItem("token")
+
   return (
     <>
     <div id='titulo'>
