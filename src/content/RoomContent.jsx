@@ -69,11 +69,23 @@ function RoomContent() {
       setTeams(teamData);
     };
 
+    const onPlayerAssignedToTeam = async () => {
+      const allPlayers = await getPlayers(localStorage.getItem("id"));
+      setPlayers(allPlayers);
+    };
+
+    const onPlayerRemovedToTeam = async () => {
+      const allPlayers = await getPlayers(localStorage.getItem("id"));
+      setPlayers(allPlayers);
+    };
+
     addEventListener("player-joined", onPlayerJoined);
     addEventListener("player-left", onPlayerLeft);
     addEventListener("room-deleted", onRoomDeleted);
     addEventListener("game-created", onGameCreated);
     addEventListener("team-created", onTeamCreated);
+    addEventListener("player-assigned-to-team", onPlayerAssignedToTeam);
+    addEventListener("player-removed-from-team", onPlayerRemovedToTeam);
 
     return () => {
       removeEventListener("player-joined", onPlayerJoined);
@@ -81,6 +93,8 @@ function RoomContent() {
       removeEventListener("game-created", onGameCreated);
       removeEventListener("room-deleted", onRoomDeleted);
       removeEventListener("team-created", onTeamCreated);
+      removeEventListener("player-assigned-to-team", onPlayerAssignedToTeam);
+      removeEventListener("player-removed-from-team", onPlayerRemovedToTeam);
     };
   }, [addEventListener, removeEventListener, navigate]);
 
@@ -161,16 +175,20 @@ function RoomContent() {
                 .map((player) => (
                   <li key={player.id}>
                     {player.username}
-                    <button
-                      onClick={() => handlePutMemberInTeam(player.id, "")}
-                    >
-                      Sacar
-                    </button>{" "}
+                    {String(hostId) === playerId && (
+                      <button
+                        onClick={() => handlePutMemberInTeam(player.id, "")}
+                      >
+                        Sacar
+                      </button>
+                    )}
                   </li>
                 ))}
             </ul>
 
-            <button onClick={() => handleEliminateTeam(team.id)}>X</button>
+            {String(hostId) === playerId && (
+              <button onClick={() => handleEliminateTeam(team.id)}>X</button>
+            )}
           </li>
         ))}
       </ul>
@@ -182,20 +200,22 @@ function RoomContent() {
           .map((player) => (
             <li key={player.id}>
               {player.username}
-              <select
-                value={player.teamId ?? ""}
-                onChange={(e) =>
-                  handlePutMemberInTeam(player.id, e.target.value)
-                }
-              >
-                <option value="">SinEquipo</option>
+              {String(hostId) === playerId && (
+                <select
+                  value={player.teamId ?? ""}
+                  onChange={(e) =>
+                    handlePutMemberInTeam(player.id, e.target.value)
+                  }
+                >
+                  <option value="">SinEquipo</option>
 
-                {teams.map((team) => (
-                  <option key={team.id} value={team.id}>
-                    {team.id}
-                  </option>
-                ))}
-              </select>
+                  {teams.map((team) => (
+                    <option key={team.id} value={team.id}>
+                      {team.id}
+                    </option>
+                  ))}
+                </select>
+              )}
             </li>
           ))}
       </ul>
