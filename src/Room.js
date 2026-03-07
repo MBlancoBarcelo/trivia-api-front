@@ -224,13 +224,13 @@ export async function assignPlayerToTeam(roomId, teamId, playerId) {
   }
 }
 
-export async function startGame() {
+export async function startGame(rounds,timePerRound,questionsPerRound) {
 
   const object = {
   "roomId": Number(localStorage.getItem("id")),
-  "rounds": 1,
-  "timePerRound": 10,
-  "questionsPerRound": 1
+  "rounds": rounds,
+  "timePerRound": timePerRound,
+  "questionsPerRound": questionsPerRound
   }
 
   try {
@@ -242,6 +242,9 @@ export async function startGame() {
       },
       body: JSON.stringify(object)
     });
+    let data  = await response.json()
+    console.log(data)
+    localStorage.setItem("gameId",data.id)
     if (!response.ok) throw new Error("failed to assign player");
   } catch (err) {
     console.error("Error assigning player:", err);

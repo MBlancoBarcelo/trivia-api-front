@@ -23,6 +23,9 @@ function RoomContent() {
   const [hostId, setHostId] = useState(null);
   const playerId = localStorage.getItem("playerId");
   const navigate = useNavigate();
+  const [rounds, setRounds] = useState(1);
+  const [timePerRound, setTimePerRound] = useState(10);
+  const [questionsPerRound, setQuestionsPerRound] = useState(1);
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -56,7 +59,7 @@ function RoomContent() {
 
     const onGameCreated = () => {
       console.log("SE DEBERIA INICAR");
-      navigate("/");
+      navigate("/game");
     };
 
     const onRoomDeleted = () => {
@@ -72,6 +75,8 @@ function RoomContent() {
     const onTeamDeleted = async () => {
       const teamData = await getTeams(localStorage.getItem("id"));
       setTeams(teamData);
+      const allPlayers = await getPlayers(localStorage.getItem("id"));
+      setPlayers(allPlayers);
     };
 
     const onPlayerAssignedToTeam = async () => {
@@ -116,14 +121,11 @@ function RoomContent() {
   async function handleLeave() {
     let idRoom = localStorage.getItem("id");
     let idPlayer = localStorage.getItem("playerId");
-    console.log(
-      "YSAJHDBSDJHGASDJHASGDJVSDJHSDGJAHGDBJAHSGDJHGDASJHGASDJHGASDASDJH",
-    );
     await leaveRoom(idRoom, idPlayer);
   }
 
   async function handleStart() {
-    await startGame();
+    await startGame(rounds, timePerRound, questionsPerRound);
   }
 
   async function handleCreateTeam() {
@@ -229,6 +231,42 @@ function RoomContent() {
 
       {String(hostId) === playerId && (
         <button onClick={handleStart}>Start</button>
+      )}
+
+      {String(hostId) === playerId && (
+        <div>
+          <h3>Game settings</h3>
+
+          <label>
+            Rounds:
+            <input
+              type="number"
+              min="1"
+              value={rounds}
+              onChange={(e) => setRounds(Number(e.target.value))}
+            />
+          </label>
+
+          <label>
+            Time per round:
+            <input
+              type="number"
+              min="10"
+              value={timePerRound}
+              onChange={(e) => setTimePerRound(Number(e.target.value))}
+            />
+          </label>
+
+          <label>
+            Questions per round:
+            <input
+              type="number"
+              min="1"
+              value={questionsPerRound}
+              onChange={(e) => setQuestionsPerRound(Number(e.target.value))}
+            />
+          </label>
+        </div>
       )}
 
       <Link to="/" onClick={handleLeave}>

@@ -1,34 +1,15 @@
-export async function createGame(roomId) {
+export async function getGame(gameId) {
   try {
-    console.log("RoomId enviado:", roomId, typeof roomId);
-
-    const mensaje = {
-      roomId: Number(roomId),
-      rounds: 1,
-      timePerRound: 10,
-      questionsPerRound: 1,
-    };
-
-    const response = await fetch("http://localhost:8083/games", {
-      method: "POST",
+    const response = await fetch(`http://localhost:8083/games/${gameId}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify(mensaje),
     });
-
-    let data = await response.json();
-
-    return data;
-
-  } catch (error) {
-    console.error("Error creating game:", error);
-    throw error;
+    if (!response.ok) throw new Error("no se ha podido conseguir el game")
+    let data = await response.json()
+    return data.id
+    console.log(data)
+  } catch (err) {
+    console.log(err);
   }
-}
-
-export async function getGame(gameId) {
-
-    
 }
