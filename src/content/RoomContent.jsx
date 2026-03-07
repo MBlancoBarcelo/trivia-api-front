@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   leaveRoom,
   getPlayers,
@@ -10,6 +10,7 @@ import {
   putMemberInTeam,
   getPlayerTeam,
   deletePlayerFromATeam,
+  startGame,
 } from "../Room.js";
 import { useState, useEffect } from "react";
 import { useSSE } from "../context/SSEContext.jsx";
@@ -21,8 +22,15 @@ function RoomContent() {
   const [hasPlayersBefore, setHasPlayersBefore] = useState(false);
   const [hostId, setHostId] = useState(null);
   const playerId = localStorage.getItem("playerId");
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchTeams = async () => {
+      const idRoom = localStorage.getItem("id");
+      const teamsData = await getTeams(idRoom);
+      setTeams(teamsData);
+    };
+
     const fetchPlayers = async () => {
       let hostid = await getHostId(localStorage.getItem("id"));
       setHostId(hostid);
@@ -31,6 +39,7 @@ function RoomContent() {
       setPlayers(playersData);
       setHasPlayersBefore(true);
     };
+    fetchTeams();
     fetchPlayers();
   }, []);
 
@@ -45,14 +54,35 @@ function RoomContent() {
       setPlayers(allPlayers);
     };
 
+    const onGameCreated = () => {
+      console.log("SE DEBERIA INICAR");
+      //navigate("/game")
+    };
+
+    const onRoomDeleted = () => {
+      console.log("SE DEBERIA INICAR");
+      //navigate("/")
+    };
+
+    const onTeamCreated = async () => {
+      const teamData = await getTeams(localStorage.getItem("id"));
+      setTeams(teamData);
+    };
+
     addEventListener("player-joined", onPlayerJoined);
     addEventListener("player-left", onPlayerLeft);
+    addEventListener("room-deleted", onRoomDeleted);
+    addEventListener("game-created", onGameCreated);
+    addEventListener("team-created", onTeamCreated);
 
     return () => {
       removeEventListener("player-joined", onPlayerJoined);
       removeEventListener("player-left", onPlayerLeft);
+      removeEventListener("game-created", onGameCreated);
+      removeEventListener("room-deleted", onRoomDeleted);
+      removeEventListener("team-created", onTeamCreated);
     };
-  }, [addEventListener, removeEventListener]);
+  }, [addEventListener, removeEventListener, navigate]);
 
   useEffect(() => {
     let idRoom = localStorage.getItem("id");
@@ -69,6 +99,10 @@ function RoomContent() {
       "YSAJHDBSDJHGASDJHASGDJVSDJHSDGJAHGDBJAHSGDJHGDASJHGASDJHGASDASDJH",
     );
     await leaveRoom(idRoom, idPlayer);
+  }
+
+  async function handleStart() {
+    await startGame();
   }
 
   async function handleCreateTeam() {
@@ -165,6 +199,10 @@ function RoomContent() {
             </li>
           ))}
       </ul>
+
+      {String(hostId) === playerId && (
+        <button onClick={handleStart}>Start</button>
+      )}
 
       <Link to="/" onClick={handleLeave}>
         Salir

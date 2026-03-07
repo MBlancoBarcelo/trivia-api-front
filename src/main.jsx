@@ -6,7 +6,7 @@ import MainMenu from './MainMenu.jsx'
 import Create from './Create.jsx'
 import Join from './Join.jsx'
 import Room from './Room.jsx'
-import Game from './Game.jsx'
+
 
 const router = createBrowserRouter([
   {
@@ -22,9 +22,6 @@ const router = createBrowserRouter([
   {
     path: "/rooms",
     Component: Room
-  },{
-    path: "/game",
-    Component: Game
   }
 ])
 
