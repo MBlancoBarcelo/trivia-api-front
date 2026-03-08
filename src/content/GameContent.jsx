@@ -31,6 +31,9 @@ function GameContent() {
 
     if (now < roundStart) return;
 
+        console.log("asdjvahsafjhsafjsfgjh")
+
+
     const loadQuestions = async () => {
       try {
         const questions = await getQuestionsOfRound(
