@@ -1,6 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router";
-import { getRoundsOfGame, getQuestionsOfRound } from "../Game.js";
+import {
+  getRoundsOfGame,
+  getQuestionsOfRound,
+  getCorrectAnswer,
+} from "../Game.js";
 import Timer from "../componente/timer.jsx";
 import Questions from "../componente/Questions.jsx";
 
@@ -10,14 +14,14 @@ function GameContent() {
   const [rounds, setRounds] = useState([]);
   const [currentRound, setCurrentRound] = useState(0);
   const [questions, setQuestions] = useState([]);
-  const [answers, setAnswers] = useState();
+  const [answers, setAnswers] = useState({});
+  const questionsRef = useRef([]);
 
   useEffect(() => {
     const getRounds = async () => {
       const arrayofrounds = await getRoundsOfGame(
         localStorage.getItem("gameId"),
       );
-      console.log(arrayofrounds);
 
       setRounds(arrayofrounds);
     };
@@ -33,8 +37,6 @@ function GameContent() {
 
     if (now < roundStart) return;
 
-    console.log("asdjvahsafjhsafjsfgjh");
-
     const loadQuestions = async () => {
       try {
         const questions = await getQuestionsOfRound(
@@ -42,6 +44,7 @@ function GameContent() {
           rounds[currentRound].id,
         );
         setQuestions(questions);
+        questionsRef.current = questions;
       } catch (err) {
         console.error("No se pueden cargar las preguntas aún:", err);
       }
@@ -50,13 +53,35 @@ function GameContent() {
     loadQuestions();
   }, [currentRound, rounds]);
 
-  const nextRound = () => {
-    
-    
-    setCurrentRound((prev) => prev + 1);
+  async function getAnswers() {
+    const gameId = localStorage.getItem("gameId"); 
+    const roundId = rounds[currentRound].id;
+    console.log("questions:", questionsRef.current);
 
+    const results = {};
+    for (const q of questionsRef.current) {
+      try {
+        const correctAnswer = await getCorrectAnswer(gameId, roundId, q.id);
+        console.log(correctAnswer)
+        results[q.id] = correctAnswer;
+      } catch (err) {
+        console.error("Error obteniendo respuesta", err);
+      }
+    }
+    setAnswers(results);
+  }
+
+  const nextRound = async () => {
+    await sleep(2000);
+
+
+
+    await getAnswers();
+
+    setCurrentRound((prev) => prev + 1);
   };
 
+  const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
   return (
     <>

@@ -22,6 +22,7 @@ export async function getCorrectAnswer(gameId,roundId,questionId){
     });
     if (!response.ok) throw new Error("no se ha podido conseguir las rounds")
     let data = await response.json()
+    console.log(data)
     return data
   } catch (err) {
     console.log(err);

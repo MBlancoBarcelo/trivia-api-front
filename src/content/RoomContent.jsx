@@ -53,10 +53,10 @@ function RoomContent() {
     };
 
     const onPlayerLeft = async (event) => {
-      let playerEliminated = event.data
+      let playerEliminated = event.data;
 
       if (Number(playerEliminated) === Number(playerId)) {
-        navigate("/")
+        navigate("/");
       }
       const allPlayers = await getPlayers(localStorage.getItem("id"));
       setPlayers(allPlayers);
@@ -68,7 +68,7 @@ function RoomContent() {
     };
 
     const onRoomDeleted = () => {
-      navigate("/")
+      navigate("/");
     };
 
     const onTeamCreated = async () => {
@@ -116,7 +116,6 @@ function RoomContent() {
 
   useEffect(() => {
     let idRoom = localStorage.getItem("id");
-    console.log("Players in room:", players);
     if (players.length <= 0 && hasPlayersBefore) {
       eliminateRoom(idRoom);
     }
@@ -127,8 +126,17 @@ function RoomContent() {
     let idPlayer = localStorage.getItem("playerId");
     await leaveRoom(idRoom, idPlayer);
   }
-
   async function handleStart() {
+    const teamsObject = teams.reduce((acc, team) => {
+      acc[team.id] = {
+        players: players.filter((p) => p.teamId === team.id),
+        score: 0,
+      };
+      return acc;
+    }, {});
+
+    localStorage.setItem("teamsObject", JSON.stringify(teamsObject));
+
     await startGame(rounds, timePerRound, questionsPerRound);
   }
 
@@ -236,9 +244,9 @@ function RoomContent() {
               )}
 
               {String(hostId) === playerId && (
-                <button
-                  onClick={() => handleEliminatePlayer(player.id)}
-                >Eliminar de la room</button>
+                <button onClick={() => handleEliminatePlayer(player.id)}>
+                  Eliminar de la room
+                </button>
               )}
             </li>
           ))}
