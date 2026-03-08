@@ -1,24 +1,54 @@
-import { useEffect, useState } from "react"
-import { getGame } from "../Game.js"
+import { useEffect, useState } from "react";
+import { getRoundsOfGame } from "../Game.js";
 
 function GameContent() {
-            const [gameId, setGameId] = useState()
+  const [rounds, setRounds] = useState([]);
+  const [time, setTime] = useState(0)
 
-    useEffect(() => {
-        const getGameInfo = async () => {
-            const IdOfGame =  await getGame(localStorage.getItem("gameId"));
-            console.log(IdOfGame)
-            setGameId(IdOfGame)
+  useEffect(() => {
+    const getRounds = async () => {
+      const arrayofrounds = await getRoundsOfGame(
+        localStorage.getItem("gameId"),
+      );
+      console.log(arrayofrounds);
+
+      setRounds(arrayofrounds)
+    };
+
+    getRounds();
+  }, []);
+
+  useEffect(() => {
+    if (rounds.length === 0) return;
+
+    const endedAt = new Date(rounds[0].endedAt)
+
+    const interval = setInterval(()=> {
+        const remaining = Math.floor((endedAt - new Date())/ 1000)
+    
+        
+        if(remaining <= 0) {
+            setTime(0)
+            clearInterval(interval)
+            return
         }
 
-        getGameInfo()
-    },[])
+        setTime(remaining)
 
-    return (
-        <>
-        <h1>hOLA</h1>
-        </>
-    )
+        
+    },1000)
+
+      return () => clearInterval(interval);
+  },[rounds])
+
+  
+  
+  return (
+    <>
+      <h1>hOLA</h1>
+      <h2>tiempo restante : {time}</h2>
+    </>
+  );
 }
 
-export default GameContent
+export default GameContent;

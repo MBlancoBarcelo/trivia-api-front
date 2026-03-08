@@ -52,19 +52,23 @@ function RoomContent() {
       setPlayers(allPlayers);
     };
 
-    const onPlayerLeft = async () => {
+    const onPlayerLeft = async (event) => {
+      let playerEliminated = event.data
+
+      if (Number(playerEliminated) === Number(playerId)) {
+        navigate("/")
+      }
       const allPlayers = await getPlayers(localStorage.getItem("id"));
       setPlayers(allPlayers);
     };
 
-    const onGameCreated = () => {
-      console.log("SE DEBERIA INICAR");
+    const onGameCreated = (event) => {
+      localStorage.setItem("gameId", event.data);
       navigate("/game");
     };
 
     const onRoomDeleted = () => {
-      console.log("SE DEBERIA INICAR");
-      //navigate("/")
+      navigate("/")
     };
 
     const onTeamCreated = async () => {
@@ -164,6 +168,11 @@ function RoomContent() {
     }
   }
 
+  async function handleEliminatePlayer(playerId) {
+    let idRoom = localStorage.getItem("id");
+    await leaveRoom(idRoom, playerId);
+  }
+
   return (
     <div>
       <h1>Room Content</h1>
@@ -224,6 +233,12 @@ function RoomContent() {
                     </option>
                   ))}
                 </select>
+              )}
+
+              {String(hostId) === playerId && (
+                <button
+                  onClick={() => handleEliminatePlayer(player.id)}
+                >Eliminar de la room</button>
               )}
             </li>
           ))}
