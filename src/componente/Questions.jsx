@@ -1,11 +1,16 @@
 import "./questions.css"
+import { sendAnswer } from "../Game.js"
 
-function Questions({ questions }) {
+function Questions({ questions, roundId }) {
+
+
+    async function handleSendAnswer(questionId,op) {
+        await sendAnswer(localStorage.getItem("gameId"),roundId,questionId,op)
+    }
 
     return (
         <div className="questions-container">
             {questions.map((q) => {
-
                 return (
                     <div className="question-card" key={q.id}>
 
@@ -23,8 +28,8 @@ function Questions({ questions }) {
 
                         {q.type === "multiple_choice" && (
                             <div className="options">
-                                {q.options.map((op, i) => (
-                                    <button key={i} className="option-btn">
+                                {q.options.map((op,i) => (
+                                    <button key={i} className="option-btn" onClick={()=> {handleSendAnswer(q.id,op)}}>
                                         {op}
                                     </button>
                                 ))}

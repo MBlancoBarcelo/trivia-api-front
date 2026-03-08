@@ -10,6 +10,7 @@ function GameContent() {
   const [rounds, setRounds] = useState([]);
   const [currentRound, setCurrentRound] = useState(0);
   const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState();
 
   useEffect(() => {
     const getRounds = async () => {
@@ -32,8 +33,7 @@ function GameContent() {
 
     if (now < roundStart) return;
 
-        console.log("asdjvahsafjhsafjsfgjh")
-
+    console.log("asdjvahsafjhsafjsfgjh");
 
     const loadQuestions = async () => {
       try {
@@ -51,8 +51,12 @@ function GameContent() {
   }, [currentRound, rounds]);
 
   const nextRound = () => {
+    
+    
     setCurrentRound((prev) => prev + 1);
+
   };
+
 
   return (
     <>
@@ -64,7 +68,7 @@ function GameContent() {
         <>
           <h1>Ronda {currentRound + 1}</h1>
           <Timer endedAt={rounds[currentRound].endedAt} onFinish={nextRound} />
-          <Questions questions={questions}/>
+          <Questions questions={questions} roundId={rounds[currentRound].id} />
         </>
       )}
     </>
