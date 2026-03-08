@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { getRoundsOfGame, getQuestionsOfRound } from "../Game.js";
 import Timer from "../componente/timer.jsx";
+import Questions from "../componente/Questions.jsx";
 
 function GameContent() {
   const navigate = useNavigate();
@@ -40,7 +41,6 @@ function GameContent() {
           localStorage.getItem("gameId"),
           rounds[currentRound].id,
         );
-        console.log(questions);
         setQuestions(questions);
       } catch (err) {
         console.error("No se pueden cargar las preguntas aún:", err);
@@ -64,6 +64,7 @@ function GameContent() {
         <>
           <h1>Ronda {currentRound + 1}</h1>
           <Timer endedAt={rounds[currentRound].endedAt} onFinish={nextRound} />
+          <Questions questions={questions}/>
         </>
       )}
     </>
