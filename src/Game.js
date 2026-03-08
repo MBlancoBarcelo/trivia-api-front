@@ -27,3 +27,18 @@ export async function getRoundsOfGame(gameId) {
     console.log(err);
   }
 }
+
+export async function getQuestionsOfRound(gameId,roundId) {
+    try {
+    const response = await fetch(`http://localhost:8083/games/${gameId}/rounds/${roundId}/questions`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    if (!response.ok) throw new Error("no se ha podido conseguir el game")
+    let data = await response.json()
+    return data
+  } catch (err) {
+    console.log(err);
+  }
+}
