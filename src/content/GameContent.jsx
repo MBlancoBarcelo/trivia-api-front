@@ -59,6 +59,7 @@ function GameContent() {
     return playerAnswers;
   }
 
+
   function calculateTeamScores(playerAnswers, correctAnswers) {
     const updatedTeams = { ...teamsScore };
 
@@ -84,12 +85,20 @@ function GameContent() {
     const gameId = localStorage.getItem("gameId");
     const roundId = rounds[currentRound].id;
 
+    await sleep(2000)
+  
+    const questionsData = await getQuestionsOfRound(gameId, roundId);
+
     const correctAnswers = {};
-    questionsRef.current.forEach((q) => {
+    questionsData.forEach((q) => {
       correctAnswers[q.id] = q.correctAnswers[0];
     });
 
-    await new Promise((res) => setTimeout(res, 1500));
+    console.log(correctAnswers);
+
+    console.log(questionsData)
+
+    await new Promise((res) => setTimeout(res, 1000));
 
     const playerAnswers = await getPlayerAnswers(
       gameId,
