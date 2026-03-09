@@ -30,7 +30,7 @@ export async function removeATeam(idTeam, idRoom) {
     if (!response.ok) throw new Error("no se ha podido eliminar");
     return true;
   } catch (error) {
-    console.log("No se ha podido eliminar el equipo");
+    console.log(error);
     return false;
   }
 }
@@ -111,23 +111,6 @@ export async function getRoomId(roomId) {
   }
 }
 
-async function getRoom(roomId) {
-  try {
-    const response = await fetch(
-      `https://triviaapi.artemrudenko.com/rooms/${roomId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-    if (!response.ok) throw new Error("failed to fetch room");
-    return await response.json();
-  } catch (err) {
-    console.error("Error fetching room:", err);
-    return null;
-  }
-}
 
 export async function putMemberInTeam(roomId, teamId, playerId) {
   try {

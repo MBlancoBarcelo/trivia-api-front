@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router";
 import {
   getRoundsOfGame,
   getQuestionsOfRound,
