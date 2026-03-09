@@ -12,7 +12,9 @@ export const SSEProvider = ({ children }) => {
 
     if (!token || !roomId) return;
         
-        const eventSource = new EventSource(`http://localhost:8083/rooms/${roomId}/events?token=${token}`);
+        const eventSource = new EventSource(`http://localhost:8083/rooms/${roomId}/events?token=${token}`,{
+            allowCredentials: true
+        });
         eventSourceRef.current = eventSource;
 
         eventSource.onopen = () => {
