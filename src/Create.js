@@ -5,7 +5,7 @@ export async function hacerAlgo() {
       code: codigo + ""
     };
 
-    const response = await fetch("http://localhost:8083/rooms", {
+    const response = await fetch("https://triviaapi.artemrudenko.com/rooms", {
       method: "POST",
       body: JSON.stringify(objeto),
       headers: {

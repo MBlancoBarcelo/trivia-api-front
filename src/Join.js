@@ -5,7 +5,7 @@ export async function joinRoom(codigo,username,id) {
         "code": codigo,
         "username": username
     }
-    fetch(`http://localhost:8083/rooms/${id}/players`, {
+    fetch(`https://triviaapi.artemrudenko.com/rooms/${id}/players`, {
         method: "POST",
 
         headers: {
