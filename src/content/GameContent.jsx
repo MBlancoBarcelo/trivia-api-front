@@ -17,6 +17,10 @@ function GameContent() {
   const teamsObject = JSON.parse(localStorage.getItem("teamsObject"));
   const [teamsScore, setTeamsScore] = useState(() => teamsObject);
 
+  const sortedTeams = Object.values(teamsScore).sort(
+    (a, b) => b.score - a.score,
+  );
+
   useEffect(() => {
     const getRounds = async () => {
       const arrayofrounds = await getRoundsOfGame(
@@ -59,7 +63,6 @@ function GameContent() {
     return playerAnswers;
   }
 
-
   function calculateTeamScores(playerAnswers, correctAnswers) {
     const updatedTeams = { ...teamsScore };
 
@@ -85,8 +88,8 @@ function GameContent() {
     const gameId = localStorage.getItem("gameId");
     const roundId = rounds[currentRound].id;
 
-    await sleep(2000)
-  
+    await sleep(2000);
+
     const questionsData = await getQuestionsOfRound(gameId, roundId);
 
     const correctAnswers = {};
@@ -96,7 +99,7 @@ function GameContent() {
 
     console.log(correctAnswers);
 
-    console.log(questionsData)
+    console.log(questionsData);
 
     await new Promise((res) => setTimeout(res, 1000));
 
@@ -136,11 +139,13 @@ function GameContent() {
           <Questions questions={questions} roundId={rounds[currentRound].id} />
           <h3>Puntajes actuales:</h3>
           <ul>
-            {Object.values(teamsScore).map((team, idx) => (
-              <li key={idx}>
-                Equipo {idx + 1}: {team.score.toFixed(2)}
-              </li>
-            ))}
+            {Object.values(teamsScore)
+              .sort((a, b) => b.score - a.score)
+              .map((team, idx) => (
+                <li key={idx}>
+                  Equipo {idx + 1}: {team.score.toFixed(2)}
+                </li>
+              ))}
           </ul>
         </>
       )}

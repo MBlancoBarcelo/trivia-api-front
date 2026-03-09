@@ -58,6 +58,13 @@ function RoomContent() {
       if (Number(playerEliminated) === Number(playerId)) {
         navigate("/");
       }
+
+      let newhostid = await getHostId(localStorage.getItem("id"));
+
+      setHostId(newhostid)
+
+      localStorage.setItem("hostId", newhostid);
+
       const allPlayers = await getPlayers(localStorage.getItem("id"));
       setPlayers(allPlayers);
     };

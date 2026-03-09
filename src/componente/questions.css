@@ -45,8 +45,28 @@
 }
 
 .answer-input {
-  width: 100%;
+  width: calc(100% - 100px);
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
+  margin-right: 10px;
+}
+
+.short-answer-container {
+  display: flex;
+  margin-top: 10px;
+}
+
+.send-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #4a6cf7;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.send-btn:hover {
+  background: #3651d4;
 }
