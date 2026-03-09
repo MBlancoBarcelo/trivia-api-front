@@ -9,42 +9,35 @@ import Timer from "../componente/timer.jsx";
 import Questions from "../componente/Questions.jsx";
 
 function GameContent() {
-  const navigate = useNavigate();
-
   const [rounds, setRounds] = useState([]);
   const [currentRound, setCurrentRound] = useState(0);
   const [questions, setQuestions] = useState([]);
-  const [answers, setAnswers] = useState({});
   const questionsRef = useRef([]);
+
+  const teamsObject = JSON.parse(localStorage.getItem("teamsObject"));
+  const [teamsScore, setTeamsScore] = useState(() => teamsObject);
 
   useEffect(() => {
     const getRounds = async () => {
       const arrayofrounds = await getRoundsOfGame(
         localStorage.getItem("gameId"),
       );
-
       setRounds(arrayofrounds);
     };
-
     getRounds();
   }, []);
 
   useEffect(() => {
     if (rounds.length === 0 || currentRound >= rounds.length) return;
 
-    const now = new Date();
-    const roundStart = new Date(rounds[currentRound].createdAt);
-
-    if (now < roundStart) return;
-
     const loadQuestions = async () => {
       try {
-        const questions = await getQuestionsOfRound(
+        const questionsData = await getQuestionsOfRound(
           localStorage.getItem("gameId"),
           rounds[currentRound].id,
         );
-        setQuestions(questions);
-        questionsRef.current = questions;
+        setQuestions(questionsData);
+        questionsRef.current = questionsData;
       } catch (err) {
         console.error("No se pueden cargar las preguntas aún:", err);
       }
@@ -53,47 +46,93 @@ function GameContent() {
     loadQuestions();
   }, [currentRound, rounds]);
 
-  async function getAnswers() {
-    const gameId = localStorage.getItem("gameId"); 
-    const roundId = rounds[currentRound].id;
-    console.log("questions:", questionsRef.current);
+  async function getPlayerAnswers(gameId, roundId, questions) {
+    const playerAnswers = {};
 
-    const results = {};
-    for (const q of questionsRef.current) {
-      try {
-        const correctAnswer = await getCorrectAnswer(gameId, roundId, q.id);
-        console.log(correctAnswer)
-        results[q.id] = correctAnswer;
-      } catch (err) {
-        console.error("Error obteniendo respuesta", err);
-      }
+    for (const q of questions) {
+      const answers = await getCorrectAnswer(gameId, roundId, q.id);
+      answers.forEach((a) => {
+        if (!playerAnswers[a.playerId]) playerAnswers[a.playerId] = [];
+        playerAnswers[a.playerId].push({ questionId: q.id, answer: a.answer });
+      });
     }
-    setAnswers(results);
+    return playerAnswers;
+  }
+
+  function calculateTeamScores(playerAnswers, correctAnswers) {
+    const updatedTeams = { ...teamsScore };
+
+    Object.entries(playerAnswers).forEach(([playerId, answers]) => {
+      const team = Object.values(updatedTeams).find((t) =>
+        t.players.some((p) => p.id === Number(playerId)),
+      );
+
+      if (!team) return;
+
+      answers.forEach((answer) => {
+        if (correctAnswers[answer.questionId] === answer.answer) {
+          const members = team.players.length;
+          team.score += 1 / members;
+        }
+      });
+    });
+
+    setTeamsScore(updatedTeams);
   }
 
   const nextRound = async () => {
-    await sleep(2000);
+    const gameId = localStorage.getItem("gameId");
+    const roundId = rounds[currentRound].id;
 
+    const correctAnswers = {};
+    questionsRef.current.forEach((q) => {
+      correctAnswers[q.id] = q.correctAnswers[0];
+    });
 
+    await new Promise((res) => setTimeout(res, 1500));
 
-    await getAnswers();
+    const playerAnswers = await getPlayerAnswers(
+      gameId,
+      roundId,
+      questionsRef.current,
+    );
+
+    calculateTeamScores(playerAnswers, correctAnswers);
 
     setCurrentRound((prev) => prev + 1);
   };
 
-  const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   return (
     <>
       {rounds.length === 0 ? (
         <h1>Cargando...</h1>
       ) : currentRound >= rounds.length ? (
-        <h1>Juego terminado</h1>
+        <>
+          <h1>Juego terminado</h1>
+          <h2>Puntajes finales:</h2>
+          <ul>
+            {Object.values(teamsScore).map((team, idx) => (
+              <li key={idx}>
+                Equipo {idx + 1}: {team.score.toFixed(2)}
+              </li>
+            ))}
+          </ul>
+        </>
       ) : (
         <>
           <h1>Ronda {currentRound + 1}</h1>
           <Timer endedAt={rounds[currentRound].endedAt} onFinish={nextRound} />
           <Questions questions={questions} roundId={rounds[currentRound].id} />
+          <h3>Puntajes actuales:</h3>
+          <ul>
+            {Object.values(teamsScore).map((team, idx) => (
+              <li key={idx}>
+                Equipo {idx + 1}: {team.score.toFixed(2)}
+              </li>
+            ))}
+          </ul>
         </>
       )}
     </>

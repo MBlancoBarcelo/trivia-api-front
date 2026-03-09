@@ -62,8 +62,24 @@ function RoomContent() {
       setPlayers(allPlayers);
     };
 
-    const onGameCreated = (event) => {
-      localStorage.setItem("gameId", event.data);
+    const onGameCreated = async (event) => {
+      const gameId = event.data;
+      localStorage.setItem("gameId", gameId);
+
+      const idRoom = localStorage.getItem("id");
+      const teamsData = await getTeams(idRoom);
+      const playersData = await getPlayers(idRoom);
+
+      const teamsObject = teamsData.reduce((acc, team) => {
+        acc[team.id] = {
+          players: playersData.filter((p) => p.teamId === team.id),
+          score: 0,
+        };
+        return acc;
+      }, {});
+
+      localStorage.setItem("teamsObject", JSON.stringify(teamsObject));
+
       navigate("/game");
     };
 
