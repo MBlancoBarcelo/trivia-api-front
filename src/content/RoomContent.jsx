@@ -81,6 +81,7 @@ function RoomContent() {
         acc[team.id] = {
           players: playersData.filter((p) => p.teamId === team.id),
           score: 0,
+          teamId: team.id
         };
         return acc;
       }, {});
@@ -150,6 +151,18 @@ function RoomContent() {
     await leaveRoom(idRoom, idPlayer);
   }
   async function handleStart() {
+    if(players.some((p) => p.teamId == null)){
+      alert("Hay jugadores sin equipo")
+      return
+    }
+
+    if(teams.some(
+      (team) => !players.some((p) => p.teamId === team.id)
+    )){
+      alert("Hay equipos sin jugadores")
+      return
+    }
+
     const teamsObject = teams.reduce((acc, team) => {
       acc[team.id] = {
         players: players.filter((p) => p.teamId === team.id),

@@ -17,10 +17,6 @@ function GameContent() {
   const teamsObject = JSON.parse(localStorage.getItem("teamsObject"));
   const [teamsScore, setTeamsScore] = useState(() => teamsObject);
 
-  const sortedTeams = Object.values(teamsScore).sort(
-    (a, b) => b.score - a.score,
-  );
-
   useEffect(() => {
     const getRounds = async () => {
       const arrayofrounds = await getRoundsOfGame(
@@ -143,7 +139,7 @@ function GameContent() {
               .sort((a, b) => b.score - a.score)
               .map((team, idx) => (
                 <li key={idx}>
-                  Equipo {idx + 1}: {team.score.toFixed(2)}
+                  Equipo {team.teamId}: {team.score.toFixed(2)}
                 </li>
               ))}
           </ul>
