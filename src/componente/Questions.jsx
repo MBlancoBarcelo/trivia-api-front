@@ -54,7 +54,7 @@ function Questions({ questions, roundId }) {
                     ).value;
                     handleSendAnswer(q.id, value);
                   }}
-                ></button>
+                > Enviar </button>
               </div>
             )}
           </div>
