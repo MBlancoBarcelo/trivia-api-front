@@ -61,7 +61,7 @@ function GameContent() {
   function calculateTeamScores(playerAnswers, correctAnswers) {
     const updatedTeams = { ...teamsScore };
 
-    console.log(updatedTeams)
+    console.log(updatedTeams);
 
     Object.entries(playerAnswers).forEach(([playerId, answers]) => {
       const team = Object.values(updatedTeams).find((t) =>
@@ -126,12 +126,11 @@ function GameContent() {
               <li key={idx}>
                 Equipo {team.teamId}
                 <ul>
-                {team.players.map((player) => (
-                  <li>
-                    {player.username}
-                  </li>
-                ))}
+                  {team.players.map((player) => (
+                    <li>{player.username}</li>
+                  ))}
                 </ul>
+                Score: {team.score.toFixed(2)}
               </li>
             ))}
           </ul>
@@ -143,13 +142,17 @@ function GameContent() {
           <Questions questions={questions} roundId={rounds[currentRound].id} />
           <h3>Puntajes actuales:</h3>
           <ul>
-            {Object.values(teamsScore)
-              .sort((a, b) => b.score - a.score)
-              .map((team, idx) => (
-                <li key={idx}>
-                  Equipo {team.teamId}: {team.score.toFixed(2)}
-                </li>
-              ))}
+            {Object.values(teamsScore).map((team, idx) => (
+              <li key={idx}>
+                Equipo {team.teamId}
+                <ul>
+                  {team.players.map((player) => (
+                    <li>{player.username}</li>
+                  ))}
+                </ul>
+                Score: {team.score.toFixed(2)}
+              </li>
+            ))}
           </ul>
         </>
       )}
