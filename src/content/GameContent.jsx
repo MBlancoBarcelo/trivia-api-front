@@ -126,7 +126,11 @@ function GameContent() {
               <li key={idx}>
                 Equipo {team.teamId}
                 <ul>
-
+                {team.players.map((player) => (
+                  <li>
+                    {player.username}
+                  </li>
+                ))}
                 </ul>
               </li>
             ))}
