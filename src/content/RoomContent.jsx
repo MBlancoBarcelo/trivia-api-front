@@ -88,7 +88,7 @@ function RoomContent() {
 
       localStorage.setItem("teamsObject", JSON.stringify(teamsObject));
 
-      navigate("/game");
+      //navigate("/game");
     };
 
     const onRoomDeleted = () => {

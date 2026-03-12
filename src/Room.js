@@ -7,7 +7,7 @@ export async function eliminateRoom(idRoom) {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (!response.ok) throw new Error("no se ha podido eliminar");
   } catch (error) {
@@ -24,7 +24,7 @@ export async function removeATeam(idTeam, idRoom) {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
 
     if (!response.ok) throw new Error("no se ha podido eliminar");
@@ -43,7 +43,7 @@ export async function getPlayers(id) {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (!response.ok) throw new Error("failed to fetch players");
 
@@ -63,7 +63,7 @@ export async function leaveRoom(roomId, playerId) {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (!response.ok) throw new Error("failed to leave room");
     return true;
@@ -81,7 +81,7 @@ export async function getHostId(roomId) {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (!response.ok) throw new Error("failed to fetch room");
     const data = await response.json();
@@ -100,7 +100,7 @@ export async function getRoomId(roomId) {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (!response.ok) throw new Error("failed to fetch room");
     const data = await response.json();
@@ -111,7 +111,6 @@ export async function getRoomId(roomId) {
   }
 }
 
-
 export async function putMemberInTeam(roomId, teamId, playerId) {
   try {
     const response = await fetch(
@@ -121,7 +120,7 @@ export async function putMemberInTeam(roomId, teamId, playerId) {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (!response.ok) throw new Error("no se pudo añadir al equipo");
   } catch (err) {
@@ -138,7 +137,7 @@ export async function deletePlayerFromATeam(roomId, teamId, playerId) {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (!response.ok) throw new Error("no se pudo eliminar jugador del equipo");
   } catch (err) {
@@ -155,7 +154,7 @@ export async function getPlayerTeam(idRoom, idPlayer) {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (!response.ok) throw new Error("no se pudo conseguir info del jugador");
     let data = await response.json();
@@ -174,7 +173,7 @@ export async function getTeams(roomId) {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (!response.ok) throw new Error("failed to fetch teams");
     return await response.json();
@@ -193,7 +192,7 @@ export async function createTeam(roomId) {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
 
     return await response.json();
@@ -212,7 +211,7 @@ export async function assignPlayerToTeam(roomId, teamId, playerId) {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (!response.ok) throw new Error("failed to assign player");
     return true;
@@ -239,6 +238,19 @@ export async function startGame(rounds, timePerRound, questionsPerRound) {
       },
       body: JSON.stringify(object),
     });
+
+    console.log(response.status);
+
+    switch (response.status) {
+      case 400:
+        throw new Error("Bad request - datos incorrectos");
+      case 401:
+        throw new Error("Unauthorized - token inválido o expirado");
+      case 403:
+        throw new Error("Forbidden - no tienes permisos");
+      case 409:
+        throw new Error("Conflict - la partida ya existe o estado inválido");
+    }
     let data = await response.json();
     console.log(data);
     localStorage.setItem("gameId", data.id);

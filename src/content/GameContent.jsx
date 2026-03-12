@@ -61,6 +61,8 @@ function GameContent() {
   function calculateTeamScores(playerAnswers, correctAnswers) {
     const updatedTeams = { ...teamsScore };
 
+    console.log(updatedTeams)
+
     Object.entries(playerAnswers).forEach(([playerId, answers]) => {
       const team = Object.values(updatedTeams).find((t) =>
         t.players.some((p) => p.id === Number(playerId)),
@@ -122,7 +124,10 @@ function GameContent() {
           <ul>
             {Object.values(teamsScore).map((team, idx) => (
               <li key={idx}>
-                Equipo {idx + 1}: {team.score.toFixed(2)}
+                Equipo {team.teamId}
+                <ul>
+
+                </ul>
               </li>
             ))}
           </ul>
