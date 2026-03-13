@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { Link } from "react-router";
 import {
   getRoundsOfGame,
   getQuestionsOfRound,
@@ -134,6 +135,7 @@ function GameContent() {
               </li>
             ))}
           </ul>
+          <Link to="/">Salir</Link>
         </>
       ) : (
         <>
